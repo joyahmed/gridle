@@ -6,6 +6,7 @@ import ServiceManagement
 /// Two extra ways to start it, for checking without clicking:
 ///   --status    print permission and open-at-login state, then quit
 ///   --selftest  move Panes's own test windows and report pass or fail, then quit
+///   --demo      play a slow, hands-free show on screen (for recording); --demo-free skips Pro scenes
 ///   --settings  start normally and open the settings window
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem?
@@ -22,6 +23,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let args = CommandLine.arguments
         if args.contains("--status") { return printStatusAndQuit() }
         if args.contains("--selftest") { return SelfTest.start() }
+        if args.contains("--demo") || args.contains("--demo-free") { return Demo.start() }
         if args.contains("--dummy") { return SelfTest.startDummy() }
         if let i = args.firstIndex(of: "--settings-shots"), i + 1 < args.count {
             SettingsSnapshot.write(to: args[i + 1])

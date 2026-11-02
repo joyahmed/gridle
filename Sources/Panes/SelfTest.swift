@@ -127,6 +127,7 @@ enum SelfTest {
             contentRect: NSRect(x: 300, y: 300, width: 300, height: 200), styleMask: [.titled, .closable],
             backing: .buffered, defer: false)
         window.title = "Panes fixed test"
+        if DemoStyle.isOn { DemoStyle.decorateFixed(window) }
         window.isReleasedWhenClosed = false
         window.makeKeyAndOrderFront(nil)
         fixedWindow = window
@@ -138,6 +139,7 @@ enum SelfTest {
             contentRect: NSRect(x: 160 + n * 40, y: 160 + n * 40, width: 420, height: 300),
             styleMask: [.titled, .closable, .resizable, .miniaturizable], backing: .buffered, defer: false)
         window.title = "Panes self-test \(n)"
+        if DemoStyle.isOn { DemoStyle.decorate(window, number: n) }
         window.isReleasedWhenClosed = false
         window.makeKeyAndOrderFront(nil)
         dummyWindows.append(window)

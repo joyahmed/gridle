@@ -3,7 +3,9 @@ import PanesCore
 
 /// Moves the front window of the front app to where `Layout` says it goes.
 enum WindowMover {
-    static var gap: Double { Settings.shared.gap }
+    /// The demo uses a wider gap so the space between windows shows up in a small GIF.
+    static var gapOverride: Double?
+    static var gap: Double { gapOverride ?? Settings.shared.gap }
 
     /// Moves the front window. Returns the screen it used, or nil when nothing moved.
     @discardableResult
