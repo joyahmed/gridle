@@ -77,3 +77,9 @@ that can't resize. It never touches your real windows.
 ## Found a problem?
 
 Open an issue with your macOS version, how many screens you have, and which app's window misbehaved.
+
+## License
+
+Copyright (C) 2026 Joy Ahmed. Panes is free software under the GNU General Public License v3:
+you can use it, change it and share it, and any copy you share stays under the same license.
+See [LICENSE](LICENSE).
