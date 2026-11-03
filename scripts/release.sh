@@ -38,7 +38,7 @@ plutil -replace CFBundleVersion -string "$(git rev-list --count HEAD)" "$app/Con
 
 # Hardened runtime + secure timestamp: both required for notarization.
 codesign --force --options runtime --timestamp --sign "$identity" "$app"
-codesign --verify --strict --verbose=2 "$app"
+codesign --verify --deep --strict --verbose=2 "$app"   # every executable inside, not just the outer bundle
 
 zip=dist/Panes-$version.zip
 ditto -c -k --keepParent "$app" "$zip"
@@ -51,6 +51,19 @@ spctl --assess --type execute --verbose=2 "$app" 2>&1 | tee /dev/stderr | grep -
   echo "Gatekeeper does not accept the app - do not publish." >&2
   exit 1
 }
+# Act like a download: unzip the FINAL zip into a fresh folder with the quarantine flag a browser
+# sets, then ask Gatekeeper again. This is the file people get, not the copy that was signed here.
+check=$(mktemp -d)
+cp "$zip" "$check/"
+xattr -w com.apple.quarantine "0081;$(printf %x "$(date +%s)");Safari;" "$check/$(basename "$zip")"
+ditto -x -k "$check/$(basename "$zip")" "$check"
+spctl --assess --type execute --verbose=2 "$check/Panes.app" 2>&1 | grep -q "Notarized Developer ID" || {
+  echo "The downloaded copy is refused by Gatekeeper - do not publish." >&2
+  exit 1
+}
+xcrun stapler validate "$check/Panes.app"
+rm -rf "$check"
+echo "Downloaded-copy check passed. Still needed before announcing: one person installs it on a Mac with no Xcode."
 shasum -a 256 "$zip"
 
 if [ "$publish" = "--publish" ]; then
