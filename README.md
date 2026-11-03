@@ -51,12 +51,13 @@ you let go.
 
 Open Panes again from Spotlight while it's running and Settings comes up.
 
-There's also a Pro edition with automatic stacking and saved layouts. This repo is the free one, and
-it stays free.
+I'm also working on a Pro edition with automatic stacking and saved layouts. It isn't out yet. This
+repo is the free one, and it stays free.
 
 ## 📦 Install
 
-Build it from source. You need macOS 14 or newer and Xcode.
+A signed download is coming soon, so you'll be able to just unzip it and drag Panes to Applications.
+Until then, you can build it yourself. You need macOS 14 or newer and Xcode.
 
 ```
 git clone https://github.com/joyahmed/panes.git
@@ -64,12 +65,13 @@ cd panes
 sh scripts/build-app.sh
 ```
 
-That builds `Panes.app`, signs it with your Apple Development certificate, puts it in
+That builds `Panes.app`, signs it with your own Apple Development certificate, puts it in
 `~/Applications`, and starts it. The first time, macOS asks to let Panes control your computer:
 turn it on in System Settings → Privacy & Security → Accessibility. That's how any window manager
 moves other apps' windows.
 
-If you use Rectangle, quit it first. It uses the same keys.
+If you use Rectangle, quit it first. It uses the same keys. If macOS's own tiling shows a preview
+when you drag to an edge, you can turn it off in System Settings → Desktop & Dock → Windows.
 
 ## ✅ Checking it
 
