@@ -23,6 +23,9 @@ enum Demo {
     }
 
     static var pid: pid_t = 0
+
+    /// PANES_DEMO_PACE=2 plays every step twice as slowly (the long video); default 1 (GIF, Short).
+    static let pace = Double(ProcessInfo.processInfo.environment["PANES_DEMO_PACE"] ?? "") ?? 1
     private static var dummy: Process?
     private static var hiddenByDemo: [NSRunningApplication] = []
     private static var finished = false
@@ -118,8 +121,8 @@ enum Demo {
         if !step.keys.isEmpty || !step.caption.isEmpty {
             DemoOverlay.shared.show(keys: step.keys, caption: step.caption)
         }
-        SelfTest.after(step.lead) { step.run() }
-        SelfTest.after(step.wait) { play(Array(list.dropFirst()), then: done) }
+        SelfTest.after(step.lead * pace) { step.run() }
+        SelfTest.after(step.wait * pace) { play(Array(list.dropFirst()), then: done) }
     }
 
     private static func endCard() {
