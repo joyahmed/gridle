@@ -13,9 +13,9 @@
   <img src="media/demo-free.gif" alt="Panes snapping windows to halves, corners and thirds, then showing the desktop" width="100%">
 </p>
 
-I used Windows for years. <kbd>Win</kbd> + <kbd>←</kbd> to snap a window, <kbd>Win</kbd> + <kbd>D</kbd> to see my
-desktop, and I never thought about it. Then I moved to a Mac with a Windows keyboard, and window
-management became the thing I fought with every day.
+I work on Windows, Ubuntu and a Mac every day. On Windows, <kbd>Win</kbd> + <kbd>←</kbd> snaps a window and
+<kbd>Win</kbd> + <kbd>D</kbd> shows my desktop, and I never think about it. When I started using a Mac too, with a
+Windows keyboard, window management became the thing I fought with every day.
 
 So I built **Panes**: a small, free menu-bar app, written in Swift, that moves windows the way my
 hands already expect.
