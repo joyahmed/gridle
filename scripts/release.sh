@@ -57,6 +57,8 @@ check=$(mktemp -d)
 cp "$zip" "$check/"
 xattr -w com.apple.quarantine "0081;$(printf %x "$(date +%s)");Safari;" "$check/$(basename "$zip")"
 ditto -x -k "$check/$(basename "$zip")" "$check"
+# ditto does not carry the flag from the zip to what it unzips (Safari's unzip does), so set it here.
+xattr -w -r com.apple.quarantine "0081;$(printf %x "$(date +%s)");Safari;" "$check/Panes.app"
 spctl --assess --type execute --verbose=2 "$check/Panes.app" 2>&1 | grep -q "Notarized Developer ID" || {
   echo "The downloaded copy is refused by Gatekeeper - do not publish." >&2
   exit 1
