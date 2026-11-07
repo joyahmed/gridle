@@ -17,16 +17,14 @@ cask "panes" do
 
   url "https://github.com/joyahmed/panes/releases/download/v#{version}/Panes-#{version}.zip"
   name "Panes"
-  desc "Snap, stack and grid windows from the keyboard or by dragging to an edge"
+  desc "Snap windows from the keyboard or by dragging to an edge"
   homepage "https://github.com/joyahmed/panes"
 
-  depends_on macos: ">= :sonoma"
+  depends_on macos: :sonoma
 
   app "Panes.app"
 
-  zap trash: [
-    "~/Library/Preferences/com.joyahmed.panes.plist",
-  ]
+  zap trash: "~/Library/Preferences/com.joyahmed.panes.plist"
 end
 CASK
 # The URL must serve exactly the zip we hashed, or brew refuses the install.
