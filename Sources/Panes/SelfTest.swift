@@ -180,7 +180,9 @@ enum SelfTest {
 
     static func finish() {
         dummy?.terminate()
-        say("\(failures == 0 ? "GREEN" : "RED") - \(passes) passed, \(failures) failed")
-        exit(failures == 0 ? 0 : 1)
+        // Nothing passed means nothing was tested, and that is never green.
+        let green = failures == 0 && passes > 0
+        say("\(green ? "GREEN" : "RED") - \(passes) passed, \(failures) failed")
+        exit(green ? 0 : 1)
     }
 }
