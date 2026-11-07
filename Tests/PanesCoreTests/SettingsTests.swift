@@ -5,6 +5,29 @@ import Testing
 
 // MARK: - Keys
 
+@Test func numberPadFiresTheSameThirdsAndFillAsTheMainKeys() {
+    let twins = Keymap.twinKeys(for: Keymap.defaults)
+    #expect(twins.first { $0.action == .leftThird }?.keyCode == 83)
+    #expect(twins.first { $0.action == .middleThird }?.keyCode == 84)
+    #expect(twins.first { $0.action == .rightThird }?.keyCode == 85)
+    #expect(twins.first { $0.action == .fill }?.keyCode == 76)
+    #expect(twins.count == 4)  // letters and arrows have no twin
+}
+
+@Test func aKeyRecordedOnTheNumberPadAlsoFiresFromTheTopRow() {
+    let pad = KeyBinding(keyCode: 83, label: "1", action: .fill)
+    #expect(Keymap.twinKeys(for: [pad]).first?.keyCode == 18)
+}
+
+@Test func aTwinNeverTakesAKeyAnotherActionChose() {
+    let top = KeyBinding(keyCode: 18, label: "1", action: .leftThird)
+    let pad = KeyBinding(keyCode: 83, label: "1", action: .fill)
+    #expect(Keymap.twinKeys(for: [top, pad]).isEmpty)
+    // The same key with other modifiers is a different key, so the twin stays.
+    let padCmd = KeyBinding(keyCode: 83, label: "1", action: .fill, modifiers: Mods.command)
+    #expect(Keymap.twinKeys(for: [top, padCmd]).count == 2)
+}
+
 @Test func defaultKeysShowAsCtrlAlt() {
     #expect(Keymap.defaults[0].display == "Ctrl+Alt+←")
     #expect(Mods.words(Mods.control | Mods.shift | Mods.command) == "Ctrl+Shift+Win+")

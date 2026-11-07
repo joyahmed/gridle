@@ -55,6 +55,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 AppDelegate.run(binding.action)
             }
         }
+        // A twin is a bonus: the main key still works, so a held twin is not a failed key.
+        for twin in Keymap.twinKeys(for: all) {
+            _ = HotKeys.shared.register(keyCode: twin.keyCode, modifiers: twin.modifiers) {
+                AppDelegate.run(twin.action)
+            }
+        }
         NSLog("Panes: %d of %d keys registered", all.count - failedKeys.count, all.count)
     }
 

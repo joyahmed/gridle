@@ -69,6 +69,29 @@ public enum Keymap {
         private static let pro: [KeyBinding] = []
     #endif
 
+    /// Top-row digits and Return, each paired with the same key on the number pad.
+    /// macOS gives the two different key codes, so a key held on one never fires from the other.
+    private static let padPairs: [(top: UInt32, pad: UInt32)] = [
+        (29, 82), (18, 83), (19, 84), (20, 85), (21, 86), (23, 87), (22, 88), (26, 89), (28, 91), (25, 92),
+        (36, 76),
+    ]
+
+    /// The same key on the other side of the keyboard, or nil when it has no twin.
+    public static func twin(of keyCode: UInt32) -> UInt32? {
+        padPairs.first { $0.top == keyCode }?.pad ?? padPairs.first { $0.pad == keyCode }?.top
+    }
+
+    /// The extra keys to take so `bindings` also fire from their twin.
+    /// A twin some other binding chose on purpose stays that binding's key.
+    public static func twinKeys(for bindings: [KeyBinding]) -> [KeyBinding] {
+        bindings.compactMap { binding in
+            guard let code = twin(of: binding.keyCode) else { return nil }
+            var extra = binding
+            extra.keyCode = code
+            return bindings.contains { $0.sameKeys(as: extra) } ? nil : extra
+        }
+    }
+
     /// The OTHER action that already uses `candidate`'s keys, or nil when they are free.
     public static func conflict(_ candidate: KeyBinding, in bindings: [KeyBinding]) -> Action? {
         bindings.first { $0.action != candidate.action && $0.sameKeys(as: candidate) }?.action
