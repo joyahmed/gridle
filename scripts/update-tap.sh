@@ -24,7 +24,10 @@ cask "gridle" do
 
   app "Gridle.app"
 
-  zap trash: "~/Library/Preferences/com.joyahmed.gridle.plist"
+  zap trash: [
+    "~/Library/Preferences/com.joyahmed.gridle.plist",
+    "~/Library/Preferences/com.joyahmed.panes.plist", # its name until 0.2.0
+  ]
 end
 CASK
 # The URL must serve exactly the zip we hashed, or brew refuses the install.
@@ -32,6 +35,10 @@ remote=$(curl -fsSL "https://github.com/joyahmed/gridle/releases/download/v$vers
 [ "$remote" = "$sha" ] || { echo "The release zip on GitHub does not match $zip - not updating the tap." >&2; exit 1; }
 cd "$tap"
 git add Casks/gridle.rb
+# Gridle was called Panes until 0.2.0. cask_renames.json makes `brew install/upgrade .../panes` move to gridle.
+if [ -f Casks/panes.rb ]; then git rm -q Casks/panes.rb; fi
+printf '{\n  "panes": "gridle"\n}\n' > cask_renames.json
+git add cask_renames.json
 git commit -m "✅TAP: Gridle $version" -m "Cask points at the GitHub release v$version, sha256 $sha (checked against the downloaded zip)."
 git push
 echo "Tap updated: brew install joyahmed/tap/gridle"
