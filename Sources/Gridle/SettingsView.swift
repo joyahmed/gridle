@@ -1,5 +1,5 @@
 import AppKit
-import PanesCore
+import GridleCore
 import ServiceManagement
 import SwiftUI
 
@@ -8,7 +8,7 @@ struct SettingsView: View {
         TabView {
             GeneralTab().tabItem { Text("General") }
             KeysTab().tabItem { Text("Keys") }
-            #if PANES_PRO
+            #if GRIDLE_PRO
                 LayoutsTab().tabItem { Text("Layouts") }
             #endif
             IgnoreTab().tabItem { Text("Ignore") }
@@ -46,7 +46,7 @@ private struct GeneralTab: View {
                         do {
                             if on { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() }
                         } catch {
-                            NSLog("Panes: open at login failed: %@", error.localizedDescription)
+                            NSLog("Gridle: open at login failed: %@", error.localizedDescription)
                         }
                         openAtLogin = SMAppService.mainApp.status == .enabled
                     }))
@@ -144,7 +144,7 @@ private struct IgnoreTab: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Panes never moves these apps.")
+            Text("Gridle never moves these apps.")
             List(settings.ignored, id: \.self) { id in
                 HStack {
                     Text(name(for: id))
@@ -154,7 +154,7 @@ private struct IgnoreTab: View {
             }
             .overlay {
                 if settings.ignored.isEmpty {
-                    Text("No apps ignored. Panes moves every window.").foregroundStyle(.secondary)
+                    Text("No apps ignored. Gridle moves every window.").foregroundStyle(.secondary)
                 }
             }
             Menu("Add a running app") {
@@ -178,11 +178,11 @@ private struct IgnoreTab: View {
 }
 
 /// Draws each settings tab to a PNG, in light and dark, without showing a window or changing
-/// the Mac's theme. Run: `Panes --settings-shots <folder>`. Used to check the screens by eye.
+/// the Mac's theme. Run: `Gridle --settings-shots <folder>`. Used to check the screens by eye.
 enum SettingsSnapshot {
     static func write(to folder: String) {
         var tabs: [(String, AnyView)] = [("general", AnyView(GeneralTab())), ("keys", AnyView(KeysTab()))]
-        #if PANES_PRO
+        #if GRIDLE_PRO
             tabs.append(("layouts", AnyView(LayoutsTab())))
         #endif
         tabs.append(("ignore", AnyView(IgnoreTab())))

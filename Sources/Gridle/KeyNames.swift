@@ -1,5 +1,5 @@
 import AppKit
-import PanesCore
+import GridleCore
 
 /// Turns a typed key into the pieces a KeyBinding needs.
 enum KeyNames {

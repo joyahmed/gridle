@@ -1,5 +1,5 @@
 import AppKit
-import PanesCore
+import GridleCore
 
 /// `--demo`: a slow, hands-free show on screen, made to be screen-recorded (README GIF, short video).
 ///
@@ -8,8 +8,8 @@ import PanesCore
 /// the shortcut being "pressed". Only the dummy's windows are ever moved, never the user's.
 /// `--demo-free` skips the Pro scenes even in the Pro build (for the public GIF).
 ///
-/// Run through `open`, so macOS checks Panes's own Accessibility permission:
-/// `open -n -W --stdout /tmp/panes-demo.txt ~/Applications/Panes.app --args --demo`
+/// Run through `open`, so macOS checks Gridle's own Accessibility permission:
+/// `open -n -W --stdout /tmp/gridle-demo.txt ~/Applications/Gridle.app --args --demo`
 enum Demo {
     /// One scene: the keys shown, a caption, and what to do a moment after they appear.
     struct Step {
@@ -24,8 +24,8 @@ enum Demo {
 
     static var pid: pid_t = 0
 
-    /// PANES_DEMO_PACE=2 plays every step twice as slowly (the long video); default 1 (GIF, Short).
-    static let pace = Double(ProcessInfo.processInfo.environment["PANES_DEMO_PACE"] ?? "") ?? 1
+    /// GRIDLE_DEMO_PACE=2 plays every step twice as slowly (the long video); default 1 (GIF, Short).
+    static let pace = Double(ProcessInfo.processInfo.environment["GRIDLE_DEMO_PACE"] ?? "") ?? 1
     private static var dummy: Process?
     private static var hiddenByDemo: [NSRunningApplication] = []
     private static var finished = false
@@ -34,7 +34,7 @@ enum Demo {
     // MARK: - Run
 
     static func start() {
-        guard AX.isAllowed else { return finish(error: "Accessibility is not allowed for Panes") }
+        guard AX.isAllowed else { return finish(error: "Accessibility is not allowed for Gridle") }
         for number in [SIGINT, SIGTERM] {
             signal(number, SIG_IGN)
             let source = DispatchSource.makeSignalSource(signal: number, queue: .main)
@@ -59,7 +59,7 @@ enum Demo {
     }
 
     /// `hide()` alone can be refused for the app in front (macOS lets the active app keep its
-    /// windows). Setting the Accessibility "hidden" flag cannot be refused while Panes has the
+    /// windows). Setting the Accessibility "hidden" flag cannot be refused while Gridle has the
     /// Accessibility permission, so do both.
     private static func forceHide(_ app: NSRunningApplication) {
         app.hide()
@@ -67,11 +67,11 @@ enum Demo {
         AXUIElementSetAttributeValue(element, kAXHiddenAttribute as CFString, kCFBooleanTrue)
     }
 
-    /// With PANES_DEMO_SIGNALS=<folder> (set by scripts/record-demo.sh) the demo and the recorder
+    /// With GRIDLE_DEMO_SIGNALS=<folder> (set by scripts/record-demo.sh) the demo and the recorder
     /// take turns: the demo writes `<say>` there, then waits up to 8 s for the recorder to write
     /// `<waitFor>`. Without the variable it does nothing.
     private static func handshake(say: String, waitFor: String) {
-        guard let folder = ProcessInfo.processInfo.environment["PANES_DEMO_SIGNALS"] else { return }
+        guard let folder = ProcessInfo.processInfo.environment["GRIDLE_DEMO_SIGNALS"] else { return }
         let dir = URL(fileURLWithPath: folder)
         FileManager.default.createFile(atPath: dir.appendingPathComponent(say).path, contents: nil)
         let wanted = dir.appendingPathComponent(waitFor).path
@@ -93,7 +93,7 @@ enum Demo {
         process.executableURL = URL(fileURLWithPath: CommandLine.arguments[0])
         process.arguments = ["--dummy"]
         var environment = ProcessInfo.processInfo.environment
-        environment["PANES_DUMMY_STYLE"] = "demo"
+        environment["GRIDLE_DUMMY_STYLE"] = "demo"
         process.environment = environment
         do { try process.run() } catch { return finish(error: "could not start the demo windows: \(error)") }
         dummy = process
@@ -104,7 +104,7 @@ enum Demo {
             for app in hiddenByDemo where !app.isHidden { forceHide(app) }
             // Recording: start the recorder only now that the screen shows nothing private.
             handshake(say: "ready", waitFor: "recording")
-            DemoOverlay.shared.card("Panes — Windows-style window snapping for Mac")
+            DemoOverlay.shared.card("Gridle — Windows-style window snapping for Mac")
             SelfTest.after(1.2) { play(steps(), then: { endCard() }) }
         }
     }
@@ -126,7 +126,7 @@ enum Demo {
     }
 
     private static func endCard() {
-        DemoOverlay.shared.card("Free · github.com/joyahmed/panes")
+        DemoOverlay.shared.card("Free · github.com/joyahmed/gridle")
         SelfTest.after(1.5) { finish(error: nil) }
     }
 
@@ -167,7 +167,7 @@ enum Demo {
             Step(caption: "", run: { Demo.signalDummy(SIGUSR2) }, wait: 0.6),
             showDesktop(),
         ]
-        #if PANES_PRO
+        #if GRIDLE_PRO
             if !CommandLine.arguments.contains("--demo-free") { list += proSteps() }
         #endif
         return list
@@ -225,9 +225,9 @@ enum Demo {
 
 // MARK: - Dummy windows that look like apps
 
-/// With `PANES_DUMMY_STYLE=demo`, the `--dummy` windows get app-like titles and a simple content view.
+/// With `GRIDLE_DUMMY_STYLE=demo`, the `--dummy` windows get app-like titles and a simple content view.
 enum DemoStyle {
-    static var isOn: Bool { ProcessInfo.processInfo.environment["PANES_DUMMY_STYLE"] == "demo" }
+    static var isOn: Bool { ProcessInfo.processInfo.environment["GRIDLE_DUMMY_STYLE"] == "demo" }
 
     private static let apps: [(title: String, color: NSColor, lines: [String])] = [
         (
@@ -239,9 +239,9 @@ enum DemoStyle {
         ),
         (
             "Browser", rgb(242, 140, 40),
-            ["github.com/joyahmed/panes", "Windows-style snapping for Mac", "Fast. Native. Free."]
+            ["github.com/joyahmed/gridle", "Windows-style snapping for Mac", "Fast. Native. Free."]
         ),
-        ("Terminal", rgb(142, 90, 214), ["$ swift build", "Compiling Panes", "Build complete!"]),
+        ("Terminal", rgb(142, 90, 214), ["$ swift build", "Compiling Gridle", "Build complete!"]),
         ("Notes", rgb(52, 178, 96), ["Shopping list", "Call the dentist", "Ideas for the weekend"]),
         ("Music", rgb(88, 100, 120), ["Now playing", "Morning Light", "Up next: Slow Waves"]),
     ]

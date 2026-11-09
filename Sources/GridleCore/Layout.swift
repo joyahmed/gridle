@@ -1,4 +1,4 @@
-/// A rectangle in screen points. PanesCore uses the Accessibility coordinate
+/// A rectangle in screen points. GridleCore uses the Accessibility coordinate
 /// system: origin at the TOP-left of the primary screen, y grows downward.
 public struct Rect: Equatable, Sendable, Codable {
     public var x: Double, y: Double, w: Double, h: Double
@@ -78,7 +78,7 @@ public enum Layout {
     }
 
     /// Converts an AppKit rect (origin bottom-left of the primary screen, y up)
-    /// to the Accessibility system PanesCore uses (origin top-left, y down).
+    /// to the Accessibility system GridleCore uses (origin top-left, y down).
     public static func axRect(fromCocoa r: Rect, primaryHeight: Double) -> Rect {
         Rect(x: r.x, y: primaryHeight - (r.y + r.h), w: r.w, h: r.h)
     }

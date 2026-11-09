@@ -1,5 +1,5 @@
 import AppKit
-import PanesCore
+import GridleCore
 
 /// Moves the front window of the front app to where `Layout` says it goes.
 enum WindowMover {

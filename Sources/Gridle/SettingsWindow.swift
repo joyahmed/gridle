@@ -9,7 +9,7 @@ final class SettingsWindow {
     func show() {
         if window == nil {
             let w = NSWindow(contentViewController: NSHostingController(rootView: SettingsView()))
-            w.title = "Panes Settings"
+            w.title = "Gridle Settings"
             w.styleMask = [.titled, .closable]
             w.isReleasedWhenClosed = false
             window = w

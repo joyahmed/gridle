@@ -1,13 +1,13 @@
 import AppKit
 import ApplicationServices
-import PanesCore
+import GridleCore
 
 /// Small helpers over the Accessibility API, the only way to move another app's window.
 /// Every call here needs the Accessibility permission.
 enum AX {
     static var isAllowed: Bool { AXIsProcessTrusted() }
 
-    /// Shows macOS's own "allow Panes to control your computer" prompt.
+    /// Shows macOS's own "allow Gridle to control your computer" prompt.
     static func askForPermission() {
         let key = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String
         _ = AXIsProcessTrustedWithOptions([key: true] as CFDictionary)

@@ -1,6 +1,6 @@
 import Foundation
+import GridleCore
 import Observation
-import PanesCore
 
 /// Everything the user can change, kept in UserDefaults so it survives a restart.
 @Observable
@@ -16,7 +16,7 @@ final class Settings {
             onKeysChanged?()
         }
     }
-    #if PANES_PRO
+    #if GRIDLE_PRO
         var layouts: [SavedLayout] {
             didSet { Settings.save(layouts, key: "layouts") }
         }
@@ -34,13 +34,26 @@ final class Settings {
 
     private init() {
         let defaults = UserDefaults.standard
+        Settings.copyFromPanesOnce(defaults)
         gap = defaults.object(forKey: "gap") == nil ? 8 : defaults.double(forKey: "gap")
         bindings = Keymap.merged(saved: Settings.load([KeyBinding].self, key: "bindings") ?? [])
-        #if PANES_PRO
+        #if GRIDLE_PRO
             layouts = Settings.load([SavedLayout].self, key: "layouts") ?? []
         #endif
         ignored = defaults.stringArray(forKey: "ignored") ?? []
         dragToSnap = defaults.object(forKey: "dragToSnap") == nil ? true : defaults.bool(forKey: "dragToSnap")
+    }
+
+    /// Gridle was called Panes up to 0.1.0, with the app ID `com.joyahmed.panes`. A new app ID means
+    /// a new settings file, so the first start copies the old keys, gap and ignore list across once.
+    /// A key Gridle already has is never overwritten.
+    private static func copyFromPanesOnce(_ defaults: UserDefaults) {
+        guard !defaults.bool(forKey: "copiedFromPanes") else { return }
+        defaults.set(true, forKey: "copiedFromPanes")
+        guard let old = defaults.persistentDomain(forName: "com.joyahmed." + "panes") else { return }
+        for key in ["gap", "bindings", "layouts", "ignored", "dragToSnap"] where defaults.object(forKey: key) == nil {
+            if let value = old[key] { defaults.set(value, forKey: key) }
+        }
     }
 
     func isIgnored(_ bundleID: String?) -> Bool {

@@ -1,11 +1,11 @@
 #!/bin/sh
-# Records Panes's hands-free demo and turns it into:
+# Records Gridle's hands-free demo and turns it into:
 #   media/demo-free.gif          for the README (free features only)
 #   media/short-<edition>.mp4    a 1080 x 1920 vertical video for YouTube Shorts
 #   media/video-<edition>.mp4    a 1920 x 1080 walkthrough, played twice as slowly, with title cards
 # Usage: sh scripts/record-demo.sh [free|pro] [video]      (default: free, GIF + Short)
 #
-# Needs: Panes installed (sh scripts/build-app.sh), ffmpeg, python3 with Pillow, and Screen
+# Needs: Gridle installed (sh scripts/build-app.sh), ffmpeg, python3 with Pillow, and Screen
 # Recording allowed for the app running this script (System Settings → Privacy & Security →
 # Screen & System Audio Recording). The demo hides your other apps for about 30 s and brings
 # exactly those back.
@@ -36,16 +36,16 @@ echo "Recording starts in 5 s. No app may be in full screen (the demo windows wo
 sleep 5
 
 # Record the main display while the demo plays; stop the recording when the demo ends.
-# The running Panes could rearrange the demo windows; quit it and start it again afterwards.
+# The running Gridle could rearrange the demo windows; quit it and start it again afterwards.
 was_running=0
-if pgrep -x Panes >/dev/null; then was_running=1; pkill -x Panes; sleep 1; fi
+if pgrep -x Gridle >/dev/null; then was_running=1; pkill -x Gridle; sleep 1; fi
 # The demo and this script take turns through files in $work/signals, so the recording holds
 # only the demo: it starts after the demo has hidden every app ("ready") and stops before the
 # demo brings them back ("done" -> "stopped").
 sig=$work/signals
 mkdir -p "$sig"
-# Through `open`, so macOS checks Panes's own Accessibility permission, not the terminal's.
-open -n -W --env "PANES_DEMO_SIGNALS=$sig" --env "PANES_DEMO_PACE=$pace" --stdout "$work/demo.log" ~/Applications/Panes.app --args "$flag" &
+# Through `open`, so macOS checks Gridle's own Accessibility permission, not the terminal's.
+open -n -W --env "GRIDLE_DEMO_SIGNALS=$sig" --env "GRIDLE_DEMO_PACE=$pace" --stdout "$work/demo.log" ~/Applications/Gridle.app --args "$flag" &
 demo=$!
 i=0; while [ ! -e "$sig/ready" ] && [ $i -lt 300 ]; do sleep 0.1; i=$((i+1)); done
 [ -e "$sig/ready" ] || { kill "$demo" 2>/dev/null; echo "The demo never got ready." >&2; exit 1; }
@@ -60,8 +60,8 @@ touch "$sig/stopped"
 wait "$demo" 2>/dev/null || true
 grep -q "DEMO DONE" "$work/demo.log" || { echo "The demo did not finish:" >&2; cat "$work/demo.log" >&2; exit 1; }
 if [ "$was_running" = 1 ]; then
-  # macOS needs a moment after the demo quits before it opens Panes again.
-  for _ in 1 2 3 4 5; do open ~/Applications/Panes.app 2>/dev/null && break; sleep 1; done
+  # macOS needs a moment after the demo quits before it opens Gridle again.
+  for _ in 1 2 3 4 5; do open ~/Applications/Gridle.app 2>/dev/null && break; sleep 1; done
 fi
 [ -s "$raw" ] || { echo "The recording is empty." >&2; exit 1; }
 
@@ -87,9 +87,9 @@ def card(name, lines):
         y += size + 30
     img.save(f"{out}/{name}.png")
 white, sky, muted = (232, 240, 250), (95, 180, 255), (150, 170, 195)
-card("intro", [("Panes", 150, white), ("Windows-style window snapping for Mac", 52, muted),
+card("intro", [("Gridle", 150, white), ("Windows-style window snapping for Mac", 52, muted),
                ("Ctrl + Alt + arrows  ·  Win + D  ·  drag to edge", 40, sky)])
-card("outro", [("Free and open source", 64, white), ("github.com/joyahmed/panes", 56, sky),
+card("outro", [("Free and open source", 64, white), ("github.com/joyahmed/gridle", 56, sky),
                ("macOS 14 or newer", 36, muted)])
 PY
   video=media/video-$edition.mp4
@@ -128,8 +128,8 @@ def centre(text, y, size, fill):
 centre("Windows-style window", 300, 84, (230, 238, 248, 255))
 centre("snapping for Mac", 400, 84, (230, 238, 248, 255))
 centre("Ctrl + Alt + arrows  ·  Win+D  ·  drag to edge", 560, 40, (95, 180, 255, 255))
-centre("Panes", 1380, 96, (230, 238, 248, 255))
-line = "Free on GitHub: joyahmed/panes" if edition == "free" else "Free + Pro · joyahmed/panes"
+centre("Gridle", 1380, 96, (230, 238, 248, 255))
+line = "Free on GitHub: joyahmed/gridle" if edition == "free" else "Free + Pro · joyahmed/gridle"
 centre(line, 1510, 44, (147, 164, 187, 255))
 img.save(f"{out}/frame.png")
 PY

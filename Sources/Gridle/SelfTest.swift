@@ -1,14 +1,14 @@
 import AppKit
-import PanesCore
+import GridleCore
 
 /// End-to-end check that never touches the user's own apps.
 ///
-/// A second Panes process (`--dummy`) shows plain test windows. This process moves
+/// A second Gridle process (`--dummy`) shows plain test windows. This process moves
 /// THOSE windows through Accessibility, the same code a key press runs, then reads
 /// back where each one landed and compares it with `Layout`.
 ///
-/// Run: `open -n -W --stdout /tmp/panes-selftest.txt ~/Applications/Panes.app --args --selftest`
-/// (through `open`, so macOS checks Panes's own Accessibility permission, not the terminal's).
+/// Run: `open -n -W --stdout /tmp/gridle-selftest.txt ~/Applications/Gridle.app --args --selftest`
+/// (through `open`, so macOS checks Gridle's own Accessibility permission, not the terminal's).
 enum SelfTest {
     private static var dummy: Process?
     private static var passes = 0
@@ -18,7 +18,7 @@ enum SelfTest {
 
     static func start() {
         guard AX.isAllowed else {
-            say("FAIL  Accessibility is not allowed for Panes")
+            say("FAIL  Accessibility is not allowed for Gridle")
             return finish()
         }
         let process = Process()
@@ -60,7 +60,7 @@ enum SelfTest {
             ]
             let steps = actions.map { action in
                 {
-                    guard let window = AX.windows(of: pid).first(where: { AX.title(of: $0) == "Panes fixed test" }),
+                    guard let window = AX.windows(of: pid).first(where: { AX.title(of: $0) == "Gridle fixed test" }),
                         let before = AX.frame(of: window),
                         let screen = WindowMover.apply(action, window: window),
                         let target = Layout.frame(for: action, in: screen, gap: WindowMover.gap)
@@ -80,7 +80,7 @@ enum SelfTest {
             }
             sequence(steps, every: 0.35) {
                 kill(pid, SIGUSR2)  // dummy closes it again, so the tiling tests count 1 window
-                #if PANES_PRO
+                #if GRIDLE_PRO
                     after(0.5) { tiling(pid) }
                 #else
                     finish()  // the free edition ends here: stack, grid and layouts are Pro
@@ -126,7 +126,7 @@ enum SelfTest {
         let window = NSWindow(
             contentRect: NSRect(x: 300, y: 300, width: 300, height: 200), styleMask: [.titled, .closable],
             backing: .buffered, defer: false)
-        window.title = "Panes fixed test"
+        window.title = "Gridle fixed test"
         if DemoStyle.isOn { DemoStyle.decorateFixed(window) }
         window.isReleasedWhenClosed = false
         window.makeKeyAndOrderFront(nil)
@@ -138,7 +138,7 @@ enum SelfTest {
         let window = NSWindow(
             contentRect: NSRect(x: 160 + n * 40, y: 160 + n * 40, width: 420, height: 300),
             styleMask: [.titled, .closable, .resizable, .miniaturizable], backing: .buffered, defer: false)
-        window.title = "Panes self-test \(n)"
+        window.title = "Gridle self-test \(n)"
         if DemoStyle.isOn { DemoStyle.decorate(window, number: n) }
         window.isReleasedWhenClosed = false
         window.makeKeyAndOrderFront(nil)

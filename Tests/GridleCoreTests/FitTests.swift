@@ -1,10 +1,10 @@
 import Testing
 
-@testable import PanesCore
+@testable import GridleCore
 
 private let screen = Rect(x: 0, y: 25, w: 1200, h: 800)
 
-/// A fixed 480 × 420 window, like Panes Settings.
+/// A fixed 480 × 420 window, like Gridle Settings.
 private func fitted(_ action: Action) -> Rect {
     let target = Layout.frame(for: action, in: screen)!
     return Layout.fit(w: 480, h: 420, in: target, for: action, screen: screen)

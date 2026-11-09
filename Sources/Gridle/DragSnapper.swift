@@ -1,6 +1,6 @@
 import AppKit
 import ApplicationServices
-import PanesCore
+import GridleCore
 
 /// Snap by dragging: grab a window by its title bar, push the pointer to a screen edge,
 /// and a preview shows where it will land. Letting go snaps it.
@@ -89,7 +89,7 @@ final class DragSnapper {
         let screens = Screens.all()
         guard screens.indices.contains(snap.screen) else { return }
         _ = WindowMover.apply(snap.action, window: target, on: screens[snap.screen])
-        #if PANES_PRO
+        #if GRIDLE_PRO
             Tiler.shared.stop(on: screens[snap.screen])
         #endif
     }

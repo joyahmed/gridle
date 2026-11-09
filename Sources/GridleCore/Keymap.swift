@@ -60,7 +60,7 @@ public enum Keymap {
         KeyBinding(keyCode: 2, label: "D", action: .showDesktop),
     ]
 
-    #if PANES_PRO
+    #if GRIDLE_PRO
         private static let pro: [KeyBinding] = [
             KeyBinding(keyCode: 1, label: "S", action: .stack),
             KeyBinding(keyCode: 5, label: "G", action: .grid),
@@ -107,7 +107,7 @@ public enum Keymap {
         return out
     }
 
-    /// Saved keys, plus the default for any action added to Panes since they were saved.
+    /// Saved keys, plus the default for any action added to Gridle since they were saved.
     public static func merged(saved: [KeyBinding]) -> [KeyBinding] {
         defaults.map { d in saved.first { $0.action == d.action } ?? d }
     }

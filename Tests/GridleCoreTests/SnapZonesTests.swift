@@ -1,6 +1,6 @@
 import Testing
 
-@testable import PanesCore
+@testable import GridleCore
 
 private let screen = Rect(x: 0, y: 0, w: 1000, h: 800)
 private let second = Rect(x: -1200, y: 100, w: 1200, h: 700)

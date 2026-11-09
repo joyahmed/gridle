@@ -1,6 +1,6 @@
 import Testing
 
-@testable import PanesCore
+@testable import GridleCore
 
 private let screen = Rect(x: 0, y: 25, w: 1200, h: 800)
 
@@ -69,7 +69,7 @@ private let screen = Rect(x: 0, y: 25, w: 1200, h: 800)
 @Test func everyActionHasExactlyOneDefaultKey() {
     let actions = Keymap.defaults.map(\.action)
     #expect(Set(actions).count == actions.count)
-    #if PANES_PRO
+    #if GRIDLE_PRO
         #expect(Set(actions) == Set(Action.allCases))
     #else
         // The free edition has no stack or grid key.

@@ -1,5 +1,5 @@
 #!/bin/sh
-# One command that says whether Panes is healthy: build, tests, lint.
+# One command that says whether Gridle is healthy: build, tests, lint.
 # Exit 0 = all green. Any failure exits 1 and names the step.
 set -u
 cd "$(dirname "$0")/.." || exit 1

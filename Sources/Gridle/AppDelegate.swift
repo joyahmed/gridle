@@ -1,18 +1,18 @@
 import AppKit
-import PanesCore
+import GridleCore
 import ServiceManagement
 
-/// Starts Panes: takes the keys, puts the icon in the menu bar, asks for permission.
+/// Starts Gridle: takes the keys, puts the icon in the menu bar, asks for permission.
 /// Two extra ways to start it, for checking without clicking:
 ///   --status    print permission and open-at-login state, then quit
-///   --selftest  move Panes's own test windows and report pass or fail, then quit
+///   --selftest  move Gridle's own test windows and report pass or fail, then quit
 ///   --demo      play a slow, hands-free show on screen (for recording); --demo-free skips Pro scenes
 ///   --settings  start normally and open the settings window
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem?
     private var failedKeys: [KeyBinding] = []
 
-    /// Opening Panes again (Spotlight, Finder, `open`) while it runs shows Settings,
+    /// Opening Gridle again (Spotlight, Finder, `open`) while it runs shows Settings,
     /// since a menu-bar app has no other window to show.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
         SettingsWindow.shared.show()
@@ -34,7 +34,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         Settings.shared.onKeysChanged = { [weak self] in self?.registerKeys() }
 
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        item.button?.image = NSImage(systemSymbolName: "rectangle.split.2x2", accessibilityDescription: "Panes")
+        item.button?.image = NSImage(systemSymbolName: "rectangle.split.2x2", accessibilityDescription: "Gridle")
         let menu = NSMenu()
         menu.delegate = self
         item.menu = menu
@@ -61,7 +61,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 AppDelegate.run(twin.action)
             }
         }
-        NSLog("Panes: %d of %d keys registered", all.count - failedKeys.count, all.count)
+        NSLog("Gridle: %d of %d keys registered", all.count - failedKeys.count, all.count)
     }
 
     static func run(_ action: Action) {
@@ -69,14 +69,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         guard AX.isAllowed else { return AX.askForPermission() }
         let front = NSWorkspace.shared.frontmostApplication.flatMap { AX.focusedWindow(of: $0.processIdentifier) }
         switch action {
-        #if PANES_PRO
+        #if GRIDLE_PRO
             case .stack: Tiler.shared.start(.stack, focused: front)
             case .grid: Tiler.shared.start(.grid, focused: front)
         #endif
         case .nextScreen:
             if front.map(WindowMover.sendToNextScreen) != true { NSSound.beep() }
         default:
-            #if PANES_PRO
+            #if GRIDLE_PRO
                 // A single-window snap means "I'm arranging this screen by hand now".
                 if let screen = WindowMover.apply(action) { Tiler.shared.stop(on: screen) }
             #else
@@ -91,7 +91,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in self?.startWatchingWindows() }
             return
         }
-        #if PANES_PRO
+        #if GRIDLE_PRO
             WindowWatcher.shared.onChange = { Tiler.shared.retileAll() }
             WindowWatcher.shared.start()
         #endif
@@ -100,7 +100,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     // MARK: - Open at login
 
-    /// Panes replaces Rectangle, so it should start with the Mac. Done once; if the user
+    /// Gridle replaces Rectangle, so it should start with the Mac. Done once; if the user
     /// turns it off in the menu, it stays off.
     private func turnOnOpenAtLoginOnce() {
         let key = "openAtLoginSetOnce"
@@ -138,14 +138,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             menu.addItem(warn)
         }
         menu.addItem(.separator())
-        #if PANES_PRO
+        #if GRIDLE_PRO
             menu.addItem(layoutsMenuItem())
         #endif
         menu.addItem(item("Settings…", #selector(openSettings), key: ","))
         let login = item("Open at login", #selector(toggleLogin))
         login.state = SMAppService.mainApp.status == .enabled ? .on : .off
         menu.addItem(login)
-        menu.addItem(item("Quit Panes", #selector(quit), key: "q"))
+        menu.addItem(item("Quit Gridle", #selector(quit), key: "q"))
     }
 
     private func item(_ title: String, _ action: Selector, key: String = "") -> NSMenuItem {
@@ -173,7 +173,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 try SMAppService.mainApp.register()
             }
         } catch {
-            NSLog("Panes: open at login failed: %@", error.localizedDescription)
+            NSLog("Gridle: open at login failed: %@", error.localizedDescription)
         }
     }
 

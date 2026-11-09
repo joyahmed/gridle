@@ -1,5 +1,5 @@
 import AppKit
-import PanesCore
+import GridleCore
 
 /// The translucent box that shows where a dragged window will land.
 final class SnapPreview {

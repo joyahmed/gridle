@@ -1,7 +1,7 @@
 import Foundation
 import Testing
 
-@testable import PanesCore
+@testable import GridleCore
 
 // MARK: - Keys
 
