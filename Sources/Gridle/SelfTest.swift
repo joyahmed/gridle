@@ -111,13 +111,15 @@ enum SelfTest {
         fixed.setEventHandler { toggleFixedWindow() }
         fixed.resume()
         fixedSignal = fixed
-        // SIGINFO = the demo's "show desktop": hide this app for one second, then come back.
+        // SIGINFO = the demo's "show desktop": take every window off screen for one second, then back.
         // Asking from the outside did not hide these windows during a recording on macOS 27.
         signal(SIGINFO, SIG_IGN)
         let hide = DispatchSource.makeSignalSource(signal: SIGINFO, queue: .main)
         hide.setEventHandler {
-            NSApp.hide(nil)
-            SelfTest.after(1.0) { NSApp.unhide(nil) }
+            // Take the windows off screen directly: inside the demo, NSApp.hide left them visible.
+            let shown = (dummyWindows + [fixedWindow].compactMap { $0 }).filter { $0.isVisible }
+            for window in shown { window.orderOut(nil) }
+            SelfTest.after(1.0) { for window in shown { window.orderFront(nil) } }
         }
         hide.resume()
         hideSignal = hide
