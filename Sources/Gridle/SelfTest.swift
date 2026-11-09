@@ -111,7 +111,19 @@ enum SelfTest {
         fixed.setEventHandler { toggleFixedWindow() }
         fixed.resume()
         fixedSignal = fixed
+        // SIGINFO = the demo's "show desktop": hide this app for one second, then come back.
+        // Asking from the outside did not hide these windows during a recording on macOS 27.
+        signal(SIGINFO, SIG_IGN)
+        let hide = DispatchSource.makeSignalSource(signal: SIGINFO, queue: .main)
+        hide.setEventHandler {
+            NSApp.hide(nil)
+            SelfTest.after(1.0) { NSApp.unhide(nil) }
+        }
+        hide.resume()
+        hideSignal = hide
     }
+
+    private static var hideSignal: DispatchSourceSignal?
 
     private static var fixedWindow: NSWindow?
     private static var fixedSignal: DispatchSourceSignal?

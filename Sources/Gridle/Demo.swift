@@ -198,14 +198,8 @@ enum Demo {
         Step(
             keys: chord(.showDesktop), caption: "Show desktop — and back",
             run: {
-                // The same calls as the real Show desktop key.
-                let app = NSRunningApplication(processIdentifier: pid)
-                app?.hide()
-                AX.setHidden(pid, true)
-                SelfTest.after(1.0) {
-                    app?.unhide()
-                    AX.setHidden(pid, false)
-                }
+                // The demo windows hide themselves for one second (see SelfTest.startDummy).
+                Demo.signalDummy(SIGINFO)
             }, wait: 2.6)
     }
 
