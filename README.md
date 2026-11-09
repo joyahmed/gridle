@@ -15,7 +15,7 @@
   <img src="media/demo-free.gif" alt="Gridle snapping windows to halves, corners and thirds, then showing the desktop" width="100%">
 </p>
 
-<p align="center"><a href="https://youtube.com/shorts/OALKeQV0GuY">▶ Watch the short</a></p>
+<p align="center"><a href="https://youtube.com/shorts/_7JYDIkQlGg">▶ Watch the short</a></p>
 
 I work on Windows, Ubuntu and a Mac every day. On Windows, <kbd>Win</kbd> + <kbd>←</kbd> snaps a window and
 <kbd>Win</kbd> + <kbd>D</kbd> shows my desktop, and I never think about it. When I started using a Mac too, with a
