@@ -18,6 +18,9 @@ pace=1
 flag=--demo-free
 [ "$edition" = pro ] && flag=--demo
 mkdir -p media
+# The Homebrew install lives in /Applications; a build-app.sh build in ~/Applications.
+app=/Applications/Gridle.app
+[ -d "$app" ] || app=$HOME/Applications/Gridle.app
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT   # the raw recording shows the whole screen; never leave it behind
 raw=$work/demo.mov
@@ -45,7 +48,7 @@ if pgrep -x Gridle >/dev/null; then was_running=1; pkill -x Gridle; sleep 1; fi
 sig=$work/signals
 mkdir -p "$sig"
 # Through `open`, so macOS checks Gridle's own Accessibility permission, not the terminal's.
-open -n -W --env "GRIDLE_DEMO_SIGNALS=$sig" --env "GRIDLE_DEMO_PACE=$pace" --stdout "$work/demo.log" ~/Applications/Gridle.app --args "$flag" &
+open -n -W --env "GRIDLE_DEMO_SIGNALS=$sig" --env "GRIDLE_DEMO_PACE=$pace" --stdout "$work/demo.log" "$app" --args "$flag" &
 demo=$!
 i=0; while [ ! -e "$sig/ready" ] && [ $i -lt 300 ]; do sleep 0.1; i=$((i+1)); done
 [ -e "$sig/ready" ] || { kill "$demo" 2>/dev/null; echo "The demo never got ready." >&2; exit 1; }
@@ -61,7 +64,7 @@ wait "$demo" 2>/dev/null || true
 grep -q "DEMO DONE" "$work/demo.log" || { echo "The demo did not finish:" >&2; cat "$work/demo.log" >&2; exit 1; }
 if [ "$was_running" = 1 ]; then
   # macOS needs a moment after the demo quits before it opens Gridle again.
-  for _ in 1 2 3 4 5; do open ~/Applications/Gridle.app 2>/dev/null && break; sleep 1; done
+  for _ in 1 2 3 4 5; do open "$app" 2>/dev/null && break; sleep 1; done
 fi
 [ -s "$raw" ] || { echo "The recording is empty." >&2; exit 1; }
 
