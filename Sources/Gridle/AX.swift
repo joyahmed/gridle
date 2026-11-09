@@ -13,6 +13,13 @@ enum AX {
         _ = AXIsProcessTrustedWithOptions([key: true] as CFDictionary)
     }
 
+    /// Hides or shows a whole app through Accessibility. `NSRunningApplication.hide()` alone is not
+    /// enough: on macOS 27 it did nothing when Gridle (a menu-bar app) asked it to hide another app.
+    static func setHidden(_ pid: pid_t, _ hidden: Bool) {
+        AXUIElementSetAttributeValue(
+            AXUIElementCreateApplication(pid), kAXHiddenAttribute as CFString, hidden as CFBoolean)
+    }
+
     static func focusedWindow(of pid: pid_t) -> AXUIElement? {
         element(AXUIElementCreateApplication(pid), kAXFocusedWindowAttribute)
     }

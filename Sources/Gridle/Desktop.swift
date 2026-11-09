@@ -8,7 +8,10 @@ enum Desktop {
     static func toggle() {
         let stillHidden = hiddenByUs.filter { !$0.isTerminated && $0.isHidden }
         if !stillHidden.isEmpty {
-            for app in stillHidden { app.unhide() }
+            for app in stillHidden {
+                app.unhide()
+                AX.setHidden(app.processIdentifier, false)
+            }
             hiddenByUs = []
             return
         }
@@ -16,7 +19,10 @@ enum Desktop {
         let visible = NSWorkspace.shared.runningApplications.filter {
             $0.activationPolicy == .regular && !$0.isHidden && $0.bundleIdentifier != me
         }
-        for app in visible { app.hide() }
+        for app in visible {
+            app.hide()
+            AX.setHidden(app.processIdentifier, true)
+        }
         hiddenByUs = visible
     }
 }

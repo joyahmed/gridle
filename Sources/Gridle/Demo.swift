@@ -198,9 +198,14 @@ enum Demo {
         Step(
             keys: chord(.showDesktop), caption: "Show desktop — and back",
             run: {
+                // The same calls as the real Show desktop key.
                 let app = NSRunningApplication(processIdentifier: pid)
                 app?.hide()
-                SelfTest.after(1.0) { app?.unhide() }
+                AX.setHidden(pid, true)
+                SelfTest.after(1.0) {
+                    app?.unhide()
+                    AX.setHidden(pid, false)
+                }
             }, wait: 2.6)
     }
 
